@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>FuelPHP 環境を Docker で構築する</title>
+  <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">FuelPHP 環境を Docker で構築する</h1>
+</header>
+<h2 id="プロジェクト構成">プロジェクト構成</h2>
+<p>構築するのは古典的な LAMP 環境。MySQL のみ別なコンテナにする。</p>
+<ol type="1">
+<li>Apache コンテナ</li>
+<li>MySQL コンテナ</li>
+</ol>
+<h2 id="fuelphp-プロジェクト作成">FuelPHP プロジェクト作成</h2>
+<p>Composer を使い、FuelPHP プロジェクトを作成する。</p>
+<pre><code>$ composer create-project fuel/fuel fuel-docker --prefer-dist</code></pre>
+<h2 id="docker-compose">Docker Compose</h2>
+<p>複数のコンテナがあるので、Docker Compose をつかう。プロジェクトの直下に docker-compose.yml ファイルを作成する。</p>
+<p>docker-compose.yml</p>
+<pre><code></code></pre>
+</body>
+</html>
