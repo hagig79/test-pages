@@ -23,6 +23,51 @@
 <h2 id="docker-compose">Docker Compose</h2>
 <p>複数のコンテナがあるので、Docker Compose をつかう。プロジェクトの直下に docker-compose.yml ファイルを作成する。</p>
 <p>docker-compose.yml</p>
-<pre><code></code></pre>
+<pre><code>version: &quot;3&quot;
+
+services:
+  php:
+    build: ./docker/php
+    ports:
+      - 80:80
+    volumes:
+      - .:/var/www/html
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: mysql
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 3306:3306</code></pre>
+<h2 id="php-用コンテナ">PHP 用コンテナ</h2>
+<p>標準の PHP コンテナには MySQL のドライバが入っていないので、Dockerfile からビルドする。</p>
+<p>docker/php/Dockerfile</p>
+<pre><code>FROM php:apache
+
+RUN apt-get update \
+    &amp;&amp; docker-php-ext-install pdo_mysql
+
+COPY ./000-default.conf /etc/apache2/sites-available/000-default.conf</code></pre>
+<h2 id="apache-設定ファイル">Apache 設定ファイル</h2>
+<p>FuelPHP は public ディレクトリに index.php が存在し、そこから他のディレクトリのソースコードを読み込んでいる。</p>
+<p>それに対して、 Apache のデフォルトのドキュメントルートは/var/www/html なので、単純に public を html にマウントさせると他のソースコードを読み込むことができないので FuelPHP は動作しない。</p>
+<p>これを解決するために FuelPHP のプロジェクトディレクトリを丸ごとマウントして、ドキュメントルートを public に変更する。</p>
+<p>docker/php/000-default.conf</p>
+<pre><code>&lt;VirtualHost *:80&gt;
+    DocumentRoot /var/www/html/public
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+&lt;/VirtualHost&gt;</code></pre>
+<h2 id="docker-compose-1">Docker Compose</h2>
+<p>コンテナを起動する。</p>
+<pre><code>$ docker-compose up</code></pre>
+<p>http://localhost/ にアクセスして FuelPHP の初期画面が表示されれば成功。</p>
+<p>もしも logs ディレクトリがないというエラーが出たら、以下のようにコンテナに入って install タスクを実行する。</p>
+<pre><code>$ docker exec -it fuel-docker_php_1 /bin/bash
+# cd /var/www/html
+# php oil r install</code></pre>
 </body>
 </html>
